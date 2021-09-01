@@ -28,26 +28,26 @@ func GenerateBoard(width, height int, randomize bool) Board {
 	return board
 }
 
-func countLivingNeighborCells(board Board, x, y int) int {
+func CountLivingNeighborCells(board Board, x, y int) int {
 	count := 0
 
 	xRange := []int{x - 1, x, x + 1}
 	yRange := []int{y - 1, y, y + 1}
 
-	for i := range yRange {
-		if i < 0 || i > len(board) {
+	for _, cy := range yRange {
+		if cy < 0 || cy == len(board) {
 			// Out of bounds
 			continue
 		}
 
-		for j := range xRange {
-			if (i == y && j == x) || j < 0 || j > len(board[i]) {
+		for _, cx := range xRange {
+			if (cy == y && cx == x) || cx < 0 || cx == len(board[cy]) {
 				// Case 1: current cell is the source cell
 				// Case 2: Out of bounds
 				continue
 			}
 
-			if board[i][j] == true {
+			if board[cy][cx] == true {
 				count++
 				continue
 			}
@@ -58,37 +58,39 @@ func countLivingNeighborCells(board Board, x, y int) int {
 }
 
 func CalculateEvolution(board Board) Board {
+	nextGenBoard := GenerateBoard(len(board[0]), len(board), false)
+
 	for y := range board {
 		for x := range board[y] {
-			livingNeighbors := countLivingNeighborCells(board, x, y)
+			livingNeighbors := CountLivingNeighborCells(board, x, y)
 
 			if livingNeighbors <= 1 {
 				// Death by isolation
-				board[y][x] = false
+				nextGenBoard[y][x] = false
 				continue
 			}
 
 			if livingNeighbors == 2 {
 				// Survival
-				board[y][x] = true
+				nextGenBoard[y][x] = true
 				continue
 			}
 
 			if livingNeighbors == 3 {
 				// Birth
-				board[y][x] = true
+				nextGenBoard[y][x] = true
 				continue
 			}
 
 			if livingNeighbors >= 4 {
 				// Death by overcrowding
-				board[y][x] = false
+				nextGenBoard[y][x] = false
 				continue
 			}
 		}
 	}
 
-	return board
+	return nextGenBoard
 }
 
 type Stats struct {
