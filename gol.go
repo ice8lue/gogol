@@ -1,4 +1,4 @@
-package go_gol
+package gogol
 
 import (
 	"math/rand"
