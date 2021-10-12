@@ -88,12 +88,12 @@ func TestCalculateEvolution(t *testing.T) {
 		t.Error("Crowded cells should die.")
 	}
 
-	if nextGenBoard[1][4] != true {
+	if nextGenBoard[3][2] != true {
 		t.Error("Cell with three neighbors should become alive.")
 	}
 
-	if nextGenBoard[0][2] != true {
-		t.Error("Cell with two neighbors should survive.")
+	if nextGenBoard[0][2] != false {
+		t.Error("Cell with two neighbors should keep its state.")
 	}
 }
 
