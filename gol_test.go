@@ -1,6 +1,7 @@
 package gogol
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -41,7 +42,7 @@ func TestBoardGeneration(t *testing.T) {
 }
 
 func TestLivingNeighborCounting(t *testing.T) {
-	board := [][]bool{
+	board := Board{
 		{true, false, false},
 		{true, false, true},
 		{false, false, false},
@@ -69,7 +70,7 @@ func TestLivingNeighborCounting(t *testing.T) {
 }
 
 func TestCalculateEvolution(t *testing.T) {
-	board := [][]bool{
+	board := Board{
 		{true, false, false, false, true},
 		{false, true, true, false, false},
 		{true, false, true, false, true},
@@ -96,8 +97,131 @@ func TestCalculateEvolution(t *testing.T) {
 	}
 }
 
+func TestStaticObjects(t *testing.T) {
+	board1 := Board{
+		{false, false, false, false},
+		{false, true, true, false},
+		{false, true, true, false},
+		{false, false, false, false},
+	}
+
+	if reflect.DeepEqual(board1, CalculateEvolution(board1)) != true {
+		t.Error("Static square should not change over evolutions.")
+	}
+
+	board2 := Board{
+		{false, false, false, false, false},
+		{false, false, true, false, false},
+		{false, true, false, true, false},
+		{false, false, true, false, false},
+		{false, false, false, false, false},
+	}
+
+	if reflect.DeepEqual(board2, CalculateEvolution(board2)) != true {
+		t.Error("Static plus should not change over evolutions.")
+	}
+
+	board3 := Board{
+		{false, false, false, false, false},
+		{false, false, true, false, false},
+		{false, true, false, true, false},
+		{false, true, false, true, false},
+		{false, false, true, false, false},
+		{false, false, false, false, false},
+	}
+
+	if reflect.DeepEqual(board3, CalculateEvolution(board3)) != true {
+		t.Error("Static 0 should not change over evolutions.")
+	}
+
+	board4 := Board{
+		{false, false, false, false, false, false},
+		{false, false, true, true, false, false},
+		{false, true, false, false, true, false},
+		{false, true, false, false, true, false},
+		{false, false, true, true, false, false},
+		{false, false, false, false, false, false},
+	}
+
+	if reflect.DeepEqual(board4, CalculateEvolution(board4)) != true {
+		t.Error("Static circle should not change over evolutions.")
+	}
+
+	board5 := Board{
+		{false, false, false, false, false, false},
+		{false, false, true, true, false, false},
+		{false, true, false, false, true, false},
+		{false, false, true, false, true, false},
+		{false, false, false, true, false, false},
+		{false, false, false, false, false, false},
+	}
+
+	if reflect.DeepEqual(board5, CalculateEvolution(board5)) != true {
+		t.Error("Static near-circle should not change over evolutions.")
+	}
+
+	board6 := Board{
+		{false, false, false, false, false, false},
+		{false, false, true, false, false, false},
+		{false, true, false, true, false, false},
+		{false, false, true, false, true, false},
+		{false, false, false, true, false, false},
+		{false, false, false, false, false, false},
+	}
+
+	if reflect.DeepEqual(board6, CalculateEvolution(board6)) != true {
+		t.Error("Static diagonal should not change over evolutions.")
+	}
+}
+
+func TestOscillatingObjects(t *testing.T) {
+	board1 := Board{
+		{false, false, false, false, false},
+		{false, false, true, false, false},
+		{false, false, true, false, false},
+		{false, false, true, false, false},
+		{false, false, false, false, false},
+	}
+
+	nextGenBoard1 := Board{
+		{false, false, false, false, false},
+		{false, false, false, false, false},
+		{false, true, true, true, false},
+		{false, false, false, false, false},
+		{false, false, false, false, false},
+	}
+
+	if reflect.DeepEqual(nextGenBoard1, CalculateEvolution(board1)) != true ||
+		reflect.DeepEqual(board1, CalculateEvolution(nextGenBoard1)) != true {
+		t.Error("Line of three cells should oscillate.")
+	}
+
+	board2 := Board{
+		{false, false, false, false, false, false},
+		{false, false, false, true, false, false},
+		{false, true, true, false, false, false},
+		{false, false, false, true, true, false},
+		{false, false, true, false, false, false},
+		{false, false, false, false, false, false},
+	}
+
+	nextGenBoard2 := Board{
+		{false, false, false, false, false, false},
+		{false, false, true, false, false, false},
+		{false, false, true, false, true, false},
+		{false, true, false, true, false, false},
+		{false, false, false, true, false, false},
+		{false, false, false, false, false, false},
+	}
+
+	if reflect.DeepEqual(nextGenBoard2, CalculateEvolution(board2)) != true ||
+		reflect.DeepEqual(board2, CalculateEvolution(nextGenBoard2)) != true {
+		t.Error("Clock pattern should oscillate.")
+	}
+}
+
 func TestCollectStatistics(t *testing.T) {
-	board := [][]bool{
+	board := Board{
 		{true, false, false, false, true},
 		{false, true, true, false, false},
 		{true, false, true, false, true},

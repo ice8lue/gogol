@@ -72,7 +72,7 @@ func CalculateEvolution(board Board) Board {
 
 			if livingNeighbors == 2 {
 				// Survival
-				nextGenBoard[y][x] = true
+				nextGenBoard[y][x] = board[y][x] == true
 				continue
 			}
 
